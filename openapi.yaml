@@ -1,0 +1,862 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: 'Concurrent Online Adventure Land, or MUD'
+  description: An API for playing multi-user text adventures
+servers:
+  - url: /v1
+tags:
+  - name: game
+  - name: room
+  - name: turn
+  - name: item
+  - name: exit
+  - name: event
+  - name: player
+  - name: character
+paths:
+  '/game/{game_id}/character/{character_id}/turn':
+    post:
+      summary: Submit player turn
+      tags:
+        - turn
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/components/parameters/characterId'
+      requestBody:
+        $ref: '#/components/requestBodies/TurnBody'
+      responses:
+        '201':
+          description: Turn submission response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TurnDetail'
+  /game:
+    get:
+      summary: Retrieve a list of games
+      tags:
+        - game
+      responses:
+        '200':
+          $ref: '#/components/responses/GameListResponse'
+    post:
+      summary: Create a new game
+      tags:
+        - game
+      requestBody:
+        $ref: '#/components/requestBodies/GameBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/GameDetailResponse'
+  '/game/{game_id}':
+    get:
+      summary: Retrieve game details
+      tags:
+        - game
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+      responses:
+        '200':
+          $ref: '#/components/responses/GameDetailResponse'
+    put:
+      summary: Update game parameters
+      tags:
+        - game
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+      requestBody:
+        $ref: '#/components/requestBodies/GameBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/GameDetailResponse'
+    delete:
+      summary: Remove game
+      tags:
+        - game
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+      responses:
+        '204':
+          description: Game deleted
+  '/game/{game_id}/room':
+    get:
+      summary: Retrieve all rooms
+      tags:
+        - room
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+      responses:
+        '200':
+          $ref: '#/components/responses/RoomListResponse'
+    post:
+      summary: Add a new room to a game
+      tags:
+        - room
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+      requestBody:
+        $ref: '#/components/requestBodies/RoomBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/RoomDetailResponse'
+  '/game/{game_id}/room/{room_id}':
+    get:
+      summary: Retrieve room details
+      tags:
+        - room
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/components/parameters/roomId'
+      responses:
+        '200':
+          $ref: '#/components/responses/RoomDetailResponse'
+    put:
+      summary: Update room details
+      tags:
+        - room
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/components/parameters/roomId'
+      requestBody:
+        $ref: '#/components/requestBodies/RoomBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/RoomDetailResponse'
+    delete:
+      summary: Remove room
+      tags:
+        - room
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/components/parameters/roomId'
+      responses:
+        '204':
+          description: Room deleted
+  '/game/{game_id}/room/{room_id}/exit':
+    get:
+      summary: Retrieve exits for a given room
+      tags:
+        - exit
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/components/parameters/roomId'
+      responses:
+        '200':
+          $ref: '#/components/responses/ExitListResponse'
+    post:
+      summary: Add a new exit to a room
+      tags:
+        - exit
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/components/parameters/roomId'
+      requestBody:
+        $ref: '#/components/requestBodies/ExitBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/RoomExitDetailResponse'
+  '/game/{game_id}/room/{room_id}/exit/{exit_id}':
+    get:
+      summary: Retrieve details for a specific exit
+      tags:
+        - exit
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/components/parameters/roomId'
+        - $ref: '#/components/parameters/exitId'
+      responses:
+        '200':
+          $ref: '#/components/responses/RoomExitDetailResponse'
+    delete:
+      summary: Remove exit from room
+      tags:
+        - exit
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/components/parameters/roomId'
+        - $ref: '#/components/parameters/exitId'
+      responses:
+        '204':
+          description: Exit deleted
+  '/game/{game_id}/item':
+    get:
+      summary: Retrieve all items
+      tags:
+        - item
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+      responses:
+        '200':
+          $ref: '#/components/responses/ItemListResponse'
+    post:
+      summary: Add a new item to a game
+      tags:
+        - item
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+      requestBody:
+        $ref: '#/components/requestBodies/ItemBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/ItemDetailResponse'
+  '/game/{game_id}/item/{item_id}':
+    get:
+      summary: Retrieve item details
+      tags:
+        - item
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/components/parameters/itemId'
+      responses:
+        '200':
+          $ref: '#/components/responses/ItemDetailResponse'
+    put:
+      summary: Update item details
+      tags:
+        - item
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/components/parameters/itemId'
+      requestBody:
+        $ref: '#/components/requestBodies/ItemBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/ItemDetailResponse'
+    delete:
+      summary: Remove item
+      tags:
+        - item
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/components/parameters/itemId'
+      responses:
+        '204':
+          description: Item deleted
+  '/game/{game_id}/event':
+    get:
+      summary: Retrieve a list of events
+      tags:
+        - event
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+      responses:
+        '200':
+          description: List of events
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfEvents'
+    post:
+      summary: Create a new event
+      tags:
+        - event
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+      requestBody:
+        $ref: '#/components/requestBodies/EventBody'
+      responses:
+        '201':
+          description: Event detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+  '/game/{game_id}/event/{event_id}':
+    get:
+      summary: Retrieve event details
+      tags:
+        - event
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/components/parameters/eventId'
+      responses:
+        '200':
+          $ref: '#/paths/~1game~1%7Bgame_id%7D~1event/post/responses/201'
+    put:
+      summary: Update event parameters
+      tags:
+        - event
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/components/parameters/eventId'
+      requestBody:
+        $ref: '#/components/requestBodies/EventBody'
+      responses:
+        '200':
+          $ref: '#/paths/~1game~1%7Bgame_id%7D~1event/post/responses/201'
+    delete:
+      summary: Remove event
+      tags:
+        - event
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/components/parameters/eventId'
+      responses:
+        '204':
+          description: Event deleted
+  '/game/{game_id}/player/{player_id}/character':
+    post:
+      summary: Create a new player character
+      tags:
+        - character
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/paths/~1player~1%7Bplayer_id%7D~1character/get/parameters/0'
+      requestBody:
+        $ref: '#/components/requestBodies/CharacterBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/CharacterDetailResponse'
+  /player:
+    get:
+      summary: Retrieve a list of players
+      tags:
+        - player
+      responses:
+        '200':
+          $ref: '#/components/responses/PlayerListResponse'
+    post:
+      summary: Create a new player
+      tags:
+        - player
+      requestBody:
+        $ref: '#/components/requestBodies/PlayerBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/PlayerDetailResponse'
+  '/player/{player_id}':
+    get:
+      summary: Retrieve player details
+      tags:
+        - player
+      parameters:
+        - $ref: '#/paths/~1player~1%7Bplayer_id%7D~1character/get/parameters/0'
+      responses:
+        '200':
+          $ref: '#/components/responses/PlayerDetailResponse'
+    put:
+      summary: Update player parameters
+      tags:
+        - player
+      parameters:
+        - $ref: '#/paths/~1player~1%7Bplayer_id%7D~1character/get/parameters/0'
+      requestBody:
+        $ref: '#/components/requestBodies/PlayerBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/PlayerDetailResponse'
+    delete:
+      summary: Remove player
+      tags:
+        - player
+      parameters:
+        - $ref: '#/paths/~1player~1%7Bplayer_id%7D~1character/get/parameters/0'
+      responses:
+        '204':
+          description: Player deleted
+  '/player/{player_id}/character':
+    get:
+      summary: Retrieve a list of player characters
+      tags:
+        - character
+      parameters:
+        - name: player_id
+          in: path
+          required: true
+          description: Player ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of player characters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfCharacters'
+  '/player/{player_id}/character/{character_id}':
+    get:
+      summary: Retrieve player character details
+      tags:
+        - character
+      parameters:
+        - $ref: '#/paths/~1player~1%7Bplayer_id%7D~1character/get/parameters/0'
+        - $ref: '#/components/parameters/characterId'
+      responses:
+        '200':
+          $ref: '#/components/responses/CharacterDetailResponse'
+    delete:
+      summary: Remove player character
+      tags:
+        - character
+      parameters:
+        - $ref: '#/paths/~1player~1%7Bplayer_id%7D~1character/get/parameters/0'
+        - $ref: '#/components/parameters/characterId'
+      responses:
+        '204':
+          description: Player deleted
+components:
+  parameters:
+    gameId:
+      name: game_id
+      in: path
+      required: true
+      description: The id of the game to edit
+      schema:
+        type: string
+    gameQueryId:
+      name: game_id
+      in: query
+      required: false
+      description: Game ID
+      schema:
+        type: string
+    characterId:
+      name: character_id
+      in: path
+      required: true
+      description: Player Character ID
+      schema:
+        type: string
+    eventId:
+      name: event_id
+      in: path
+      required: true
+      description: Event ID
+      schema:
+        type: string
+    roomId:
+      name: room_id
+      in: path
+      required: true
+      description: UUID of a room
+      schema:
+        type: string
+    exitId:
+      name: exit_id
+      in: path
+      required: true
+      description: UUID of an exit
+      schema:
+        type: string
+    itemId:
+      name: item_id
+      in: path
+      required: true
+      description: Item ID
+      schema:
+        type: string
+    playerId:
+      $ref: '#/paths/~1player~1%7Bplayer_id%7D~1character/get/parameters/0'
+  schemas:
+    ArrayOfGames:
+      type: array
+      items:
+        $ref: '#/components/schemas/Game'
+    Game:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+    GameDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        properties:
+          type: object
+          additionalProperties:
+            type: string
+    GameSubmit:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        properties:
+          type: object
+          additionalProperties:
+            type: string
+    CharacterSubmit:
+      type: object
+      properties:
+        player_id:
+          type: string
+        title:
+          type: string
+    CharacterDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        game_id:
+          type: string
+        player_id:
+          type: string
+        title:
+          type: string
+        location:
+          type: string
+        properties:
+          type: object
+          additionalProperties:
+            type: string
+    TurnResponseStatus:
+      type: string
+      enum:
+        - OK
+        - ERROR
+    TurnDetail:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/TurnResponseStatus'
+        text:
+          type: string
+    TurnSubmit:
+      type: object
+      properties:
+        command:
+          type: string
+    EventItem:
+      type: object
+      properties:
+        id:
+          type: string
+        primitive:
+          type: string
+        arguments:
+          type: array
+          items:
+            type: string
+    EventItemList:
+      type: array
+      items:
+        $ref: '#/components/schemas/EventItem'
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+        command:
+          type: string
+        conditions:
+          $ref: '#/components/schemas/EventItemList'
+        true_part:
+          $ref: '#/components/schemas/EventItemList'
+        false_part:
+          $ref: '#/components/schemas/EventItemList'
+    ArrayOfEvents:
+      type: array
+      items:
+        $ref: '#/components/schemas/Event'
+    EventItemSubmit:
+      type: object
+      properties:
+        primitive:
+          type: string
+        arguments:
+          type: array
+          items:
+            type: string
+    EventItemSubmitList:
+      type: array
+      items:
+        $ref: '#/components/schemas/EventItemSubmit'
+    EventSubmit:
+      type: object
+      properties:
+        command:
+          type: string
+        conditions:
+          $ref: '#/components/schemas/EventItemSubmitList'
+        true_part:
+          $ref: '#/components/schemas/EventItemSubmitList'
+        false_part:
+          $ref: '#/components/schemas/EventItemSubmitList'
+    Room:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+    RoomDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        game_id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        exits:
+          $ref: '#/components/schemas/ArrayOfExits'
+    Exit:
+      type: object
+      properties:
+        id:
+          type: string
+        to_room_id:
+          type: string
+        direction:
+          type: string
+    ExitSubmit:
+      type: object
+      properties:
+        to_room_id:
+          type: string
+        direction:
+          type: string
+    RoomSubmit:
+      type: object
+      properties:
+        game_id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        exits:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExitSubmit'
+    ArrayOfRooms:
+      type: array
+      items:
+        $ref: '#/components/schemas/Room'
+    ArrayOfExits:
+      type: array
+      items:
+        $ref: '#/components/schemas/Exit'
+    Item:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+    ItemDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        game_id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+        attack:
+          type: integer
+        defense:
+          type: integer
+        location:
+          type: string
+          nullable: true
+    ItemSubmit:
+      type: object
+      properties:
+        game_id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+        attack:
+          type: integer
+        defense:
+          type: integer
+        location:
+          type: string
+          nullable: true
+    ArrayOfItems:
+      type: array
+      items:
+        $ref: '#/components/schemas/Item'
+    Player:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+    PlayerSubmit:
+      type: object
+      properties:
+        title:
+          type: string
+    PlayerDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        characters:
+          $ref: '#/components/schemas/ArrayOfCharacters'
+    ArrayOfPlayers:
+      type: array
+      items:
+        $ref: '#/components/schemas/Player'
+    Character:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+    ArrayOfCharacters:
+      type: array
+      items:
+        $ref: '#/components/schemas/Character'
+  requestBodies:
+    GameBody:
+      description: Game properties
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GameSubmit'
+    CharacterBody:
+      description: Settable Player Character properties
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CharacterSubmit'
+    TurnBody:
+      description: Turn submission
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TurnSubmit'
+    EventBody:
+      description: Turn submission
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EventSubmit'
+    RoomBody:
+      description: Settable Room properties
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoomSubmit'
+    ExitBody:
+      description: Settable Exit properties
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExitSubmit'
+    ItemBody:
+      description: Settable Item properties
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ItemSubmit'
+    PlayerBody:
+      description: Settable Player properties
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PlayerSubmit'
+    CharacterUpdateBody:
+      description: Engine settable Player Character properties
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CharacterDetail'
+  responses:
+    GameListResponse:
+      description: List of games
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfGames'
+    GameDetailResponse:
+      description: Game detail
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GameDetail'
+    RoomListResponse:
+      description: List of rooms
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfRooms'
+    RoomDetailResponse:
+      description: Room detail
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoomDetail'
+    RoomExitDetailResponse:
+      description: Exit detail
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Exit'
+    ItemDetailResponse:
+      description: Item detail
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ItemDetail'
+    ExitListResponse:
+      description: List of exits
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfExits'
+    ItemListResponse:
+      description: List of items
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfItems'
+    CharacterListResponse:
+      $ref: '#/paths/~1player~1%7Bplayer_id%7D~1character/get/responses/200'
+    CharacterDetailResponse:
+      description: Character detail
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CharacterDetail'
+    PlayerListResponse:
+      description: List of players
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfPlayers'
+    PlayerDetailResponse:
+      description: Player detail
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PlayerDetail'
