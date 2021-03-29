@@ -14,6 +14,7 @@ tags:
   - name: event
   - name: player
   - name: character
+  - name: location
 paths:
   '/game/{game_id}/character/{character_id}/turn':
     post:
@@ -304,6 +305,60 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/CharacterDetailResponse'
+  '/game/{game_id}/location':
+    get:
+      summary: Retrieve a list of locations
+      tags:
+        - location
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+      responses:
+        '200':
+          $ref: '#/components/responses/LocationListResponse'
+    post:
+      summary: Create a new location
+      tags:
+        - location
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+      requestBody:
+        $ref: '#/components/requestBodies/LocationBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/LocationDetailResponse'
+  '/game/{game_id}/location/{location_id}':
+    get:
+      summary: Retrieve location details
+      tags:
+        - location
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/components/parameters/locationId'
+      responses:
+        '200':
+          $ref: '#/components/responses/LocationDetailResponse'
+    put:
+      summary: Update location details
+      tags:
+        - location
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/components/parameters/locationId'
+      requestBody:
+        $ref: '#/components/requestBodies/LocationBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/LocationDetailResponse'
+    delete:
+      summary: Remove location
+      tags:
+        - location
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+        - $ref: '#/components/parameters/locationId'
+      responses:
+        '204':
+          description: Location deleted
   /player:
     get:
       summary: Retrieve a list of players
@@ -622,6 +677,30 @@ components:
       properties:
         title:
           type: string
+    ArrayOfLocation:
+      type: array
+      items:
+        $ref: '#/components/schemas/Location'
+    Location:
+      type: object
+      properties:
+        id:
+          type: string
+    LocationDetail:
+      allOf:
+        - $ref: '#/components/schemas/Location'
+        - $ref: '#/components/schemas/LocationSubmit'
+    LocationSubmit:
+      type: object
+      properties:
+        game_id:
+          type: string
+        room_id:
+          type: string
+        character_id:
+          type: string
+        item_id:
+          type: string
   parameters:
     gameId:
       name: game_id
@@ -677,6 +756,13 @@ components:
       in: path
       required: true
       description: Player ID
+      schema:
+        type: string
+    locationId:
+      name: location_id
+      in: path
+      required: true
+      description: The id of the location
       schema:
         type: string
   requestBodies:
@@ -743,6 +829,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/CharacterDetail'
+    LocationBody:
+      description: Location properties
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LocationSubmit'
   responses:
     GameListResponse:
       description: List of games
@@ -833,3 +926,15 @@ components:
                 $ref: '#/components/schemas/EventItemList'
               false_part:
                 $ref: '#/components/schemas/EventItemList'
+    LocationDetailResponse:
+      description: Location detail
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LocationDetail'
+    LocationListResponse:
+      description: List of locations
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfLocation'
