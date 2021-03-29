@@ -257,11 +257,7 @@ paths:
         $ref: '#/components/requestBodies/EventBody'
       responses:
         '201':
-          description: Event detail
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Event'
+          $ref: '#/components/responses/EventDetailResponse'
   '/game/{game_id}/event/{event_id}':
     get:
       summary: Retrieve event details
@@ -272,7 +268,7 @@ paths:
         - $ref: '#/components/parameters/eventId'
       responses:
         '200':
-          $ref: '#/paths/~1game~1%7Bgame_id%7D~1event/post/responses/201'
+          $ref: '#/components/responses/EventDetailResponse'
     put:
       summary: Update event parameters
       tags:
@@ -284,7 +280,7 @@ paths:
         $ref: '#/components/requestBodies/EventBody'
       responses:
         '200':
-          $ref: '#/paths/~1game~1%7Bgame_id%7D~1event/post/responses/201'
+          $ref: '#/components/responses/EventDetailResponse'
     delete:
       summary: Remove event
       tags:
@@ -302,7 +298,7 @@ paths:
         - character
       parameters:
         - $ref: '#/components/parameters/gameId'
-        - $ref: '#/paths/~1player~1%7Bplayer_id%7D~1character/get/parameters/0'
+        - $ref: '#/components/parameters/playerId'
       requestBody:
         $ref: '#/components/requestBodies/CharacterBody'
       responses:
@@ -331,7 +327,7 @@ paths:
       tags:
         - player
       parameters:
-        - $ref: '#/paths/~1player~1%7Bplayer_id%7D~1character/get/parameters/0'
+        - $ref: '#/components/parameters/playerId'
       responses:
         '200':
           $ref: '#/components/responses/PlayerDetailResponse'
@@ -340,7 +336,7 @@ paths:
       tags:
         - player
       parameters:
-        - $ref: '#/paths/~1player~1%7Bplayer_id%7D~1character/get/parameters/0'
+        - $ref: '#/components/parameters/playerId'
       requestBody:
         $ref: '#/components/requestBodies/PlayerBody'
       responses:
@@ -351,7 +347,7 @@ paths:
       tags:
         - player
       parameters:
-        - $ref: '#/paths/~1player~1%7Bplayer_id%7D~1character/get/parameters/0'
+        - $ref: '#/components/parameters/playerId'
       responses:
         '204':
           description: Player deleted
@@ -361,26 +357,17 @@ paths:
       tags:
         - character
       parameters:
-        - name: player_id
-          in: path
-          required: true
-          description: Player ID
-          schema:
-            type: string
+        - $ref: '#/components/parameters/playerId'
       responses:
         '200':
-          description: List of player characters
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ArrayOfCharacters'
+          $ref: '#/components/responses/CharacterListResponse'
   '/player/{player_id}/character/{character_id}':
     get:
       summary: Retrieve player character details
       tags:
         - character
       parameters:
-        - $ref: '#/paths/~1player~1%7Bplayer_id%7D~1character/get/parameters/0'
+        - $ref: '#/components/parameters/playerId'
         - $ref: '#/components/parameters/characterId'
       responses:
         '200':
@@ -390,124 +377,54 @@ paths:
       tags:
         - character
       parameters:
-        - $ref: '#/paths/~1player~1%7Bplayer_id%7D~1character/get/parameters/0'
+        - $ref: '#/components/parameters/playerId'
         - $ref: '#/components/parameters/characterId'
       responses:
         '204':
           description: Player deleted
 components:
-  parameters:
-    gameId:
-      name: game_id
-      in: path
-      required: true
-      description: The id of the game to edit
-      schema:
-        type: string
-    gameQueryId:
-      name: game_id
-      in: query
-      required: false
-      description: Game ID
-      schema:
-        type: string
-    characterId:
-      name: character_id
-      in: path
-      required: true
-      description: Player Character ID
-      schema:
-        type: string
-    eventId:
-      name: event_id
-      in: path
-      required: true
-      description: Event ID
-      schema:
-        type: string
-    roomId:
-      name: room_id
-      in: path
-      required: true
-      description: UUID of a room
-      schema:
-        type: string
-    exitId:
-      name: exit_id
-      in: path
-      required: true
-      description: UUID of an exit
-      schema:
-        type: string
-    itemId:
-      name: item_id
-      in: path
-      required: true
-      description: Item ID
-      schema:
-        type: string
-    playerId:
-      $ref: '#/paths/~1player~1%7Bplayer_id%7D~1character/get/parameters/0'
   schemas:
     ArrayOfGames:
       type: array
       items:
         $ref: '#/components/schemas/Game'
     Game:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
+      allOf:
+        - $ref: '#/components/schemas/DBObjectBase'
     GameDetail:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        description:
-          type: string
-        properties:
-          type: object
-          additionalProperties:
-            type: string
+      allOf:
+        - $ref: '#/components/schemas/Game'
+        - $ref: '#/components/schemas/GameSubmit'
     GameSubmit:
-      type: object
-      properties:
-        title:
-          type: string
-        description:
-          type: string
-        properties:
-          type: object
-          additionalProperties:
-            type: string
+      allOf:
+        - $ref: '#/components/schemas/ObjectBase'
+        - type: object
+          properties:
+            description:
+              type: string
+            attributes:
+              type: object
+              additionalProperties:
+                type: string
     CharacterSubmit:
-      type: object
-      properties:
-        player_id:
-          type: string
-        title:
-          type: string
+      allOf:
+        - $ref: '#/components/schemas/ObjectBase'
     CharacterDetail:
-      type: object
-      properties:
-        id:
-          type: string
-        game_id:
-          type: string
-        player_id:
-          type: string
-        title:
-          type: string
-        location:
-          type: string
-        properties:
-          type: object
-          additionalProperties:
-            type: string
+      allOf:
+        - $ref: '#/components/schemas/Character'
+        - $ref: '#/components/schemas/CharacterSubmit'
+        - type: object
+          properties:
+            game_id:
+              type: string
+            player_id:
+              type: string
+            location:
+              type: string
+            attributes:
+              type: object
+              additionalProperties:
+                type: string
     TurnResponseStatus:
       type: string
       enum:
@@ -582,25 +499,16 @@ components:
         false_part:
           $ref: '#/components/schemas/EventItemSubmitList'
     Room:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
+      allOf:
+        - $ref: '#/components/schemas/DBObjectBase'
     RoomDetail:
-      type: object
-      properties:
-        id:
-          type: string
-        game_id:
-          type: string
-        title:
-          type: string
-        description:
-          type: string
-        exits:
-          $ref: '#/components/schemas/ArrayOfExits'
+      allOf:
+        - $ref: '#/components/schemas/Room'
+        - $ref: '#/components/schemas/RoomSubmit'
+        - type: object
+          properties:
+            exits:
+              $ref: '#/components/schemas/ArrayOfExits'
     Exit:
       type: object
       properties:
@@ -618,18 +526,22 @@ components:
         direction:
           type: string
     RoomSubmit:
-      type: object
-      properties:
-        game_id:
-          type: string
-        title:
-          type: string
-        description:
-          type: string
-        exits:
-          type: array
-          items:
-            $ref: '#/components/schemas/ExitSubmit'
+      allOf:
+        - $ref: '#/components/schemas/ObjectBase'
+        - type: object
+          properties:
+            game_id:
+              type: string
+            description:
+              type: string
+            exits:
+              type: array
+              items:
+                $ref: '#/components/schemas/ExitSubmit'
+            attributes:
+              type: object
+              additionalProperties:
+                type: string
     ArrayOfRooms:
       type: array
       items:
@@ -639,94 +551,134 @@ components:
       items:
         $ref: '#/components/schemas/Exit'
     Item:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
+      allOf:
+        - $ref: '#/components/schemas/DBObjectBase'
     ItemDetail:
-      type: object
-      properties:
-        id:
-          type: string
-        game_id:
-          type: string
-        title:
-          type: string
-        description:
-          type: string
-        aliases:
-          type: array
-          items:
-            type: string
-        attack:
-          type: integer
-        defense:
-          type: integer
-        location:
-          type: string
-          nullable: true
+      allOf:
+        - $ref: '#/components/schemas/Item'
+        - $ref: '#/components/schemas/ItemSubmit'
     ItemSubmit:
-      type: object
-      properties:
-        game_id:
-          type: string
-        title:
-          type: string
-        description:
-          type: string
-        aliases:
-          type: array
-          items:
-            type: string
-        attack:
-          type: integer
-        defense:
-          type: integer
-        location:
-          type: string
-          nullable: true
+      allOf:
+        - $ref: '#/components/schemas/ObjectBase'
+        - type: object
+          properties:
+            game_id:
+              type: string
+            title:
+              type: string
+            description:
+              type: string
+            aliases:
+              type: array
+              items:
+                type: string
+            attributes:
+              type: object
+              additionalProperties:
+                type: string
     ArrayOfItems:
       type: array
       items:
         $ref: '#/components/schemas/Item'
     Player:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
+      allOf:
+        - $ref: '#/components/schemas/DBObjectBase'
     PlayerSubmit:
-      type: object
-      properties:
-        title:
-          type: string
+      allOf:
+        - $ref: '#/components/schemas/ObjectBase'
+        - properties:
+            attributes:
+              type: object
+              additionalProperties:
+                type: string
     PlayerDetail:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        characters:
-          $ref: '#/components/schemas/ArrayOfCharacters'
+      allOf:
+        - $ref: '#/components/schemas/Player'
+        - $ref: '#/components/schemas/PlayerSubmit'
+        - type: object
+          properties:
+            characters:
+              $ref: '#/components/schemas/ArrayOfCharacters'
     ArrayOfPlayers:
       type: array
       items:
         $ref: '#/components/schemas/Player'
     Character:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
+      allOf:
+        - $ref: '#/components/schemas/DBObjectBase'
     ArrayOfCharacters:
       type: array
       items:
         $ref: '#/components/schemas/Character'
+    DBObjectBase:
+      allOf:
+        - $ref: '#/components/schemas/ObjectBase'
+        - type: object
+          properties:
+            id:
+              type: string
+    ObjectBase:
+      type: object
+      properties:
+        title:
+          type: string
+  parameters:
+    gameId:
+      name: game_id
+      in: path
+      required: true
+      description: The id of the game to edit
+      schema:
+        type: string
+    gameQueryId:
+      name: game_id
+      in: query
+      required: false
+      description: Game ID
+      schema:
+        type: string
+    characterId:
+      name: character_id
+      in: path
+      required: true
+      description: Player Character ID
+      schema:
+        type: string
+    eventId:
+      name: event_id
+      in: path
+      required: true
+      description: Event ID
+      schema:
+        type: string
+    roomId:
+      name: room_id
+      in: path
+      required: true
+      description: UUID of a room
+      schema:
+        type: string
+    exitId:
+      name: exit_id
+      in: path
+      required: true
+      description: UUID of an exit
+      schema:
+        type: string
+    itemId:
+      name: item_id
+      in: path
+      required: true
+      description: Item ID
+      schema:
+        type: string
+    playerId:
+      name: player_id
+      in: path
+      required: true
+      description: Player ID
+      schema:
+        type: string
   requestBodies:
     GameBody:
       description: Game properties
@@ -841,7 +793,11 @@ components:
           schema:
             $ref: '#/components/schemas/ArrayOfItems'
     CharacterListResponse:
-      $ref: '#/paths/~1player~1%7Bplayer_id%7D~1character/get/responses/200'
+      description: List of player characters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfCharacters'
     CharacterDetailResponse:
       description: Character detail
       content:
@@ -860,3 +816,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/PlayerDetail'
+    EventDetailResponse:
+      description: Event detail
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+              command:
+                type: string
+              conditions:
+                $ref: '#/components/schemas/EventItemList'
+              true_part:
+                $ref: '#/components/schemas/EventItemList'
+              false_part:
+                $ref: '#/components/schemas/EventItemList'
