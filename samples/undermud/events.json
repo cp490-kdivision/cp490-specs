@@ -1,0 +1,53 @@
+[
+  {
+    "command": "",
+    "conditions": [
+        {"primitive": "has-key", "arguments": ["character", "first-turn"]}
+    ],
+    "true_part": [],
+    "false_part": [
+      {"primitive": "set-key",  "arguments": ["character", "first-turn", "true"]},
+      {"primitive": "message",  "arguments": ["game", "starting-message"]},
+      {"primitive": "go", "arguments": ["game", "starting-room"]}
+    ]
+  },
+  {
+    "command": "look",
+    "conditions": [],
+    "true_part": [
+      {"primitive": "look", "arguments": []}
+    ],
+    "false_part": []
+  },
+  {
+    "command": "go !direction",
+    "conditions": [
+    ],
+    "true_part": [
+      {"primitive": "go-via-exit", "arguments": ["!direction"]}
+    ],
+    "false_part": []
+  },
+  {
+    "command": "get !item",
+    "conditions": [
+      {"primitive": "is-true", "arguments": ["item", "!item", "takeable"]}
+    ],
+    "true_part": [],
+    "false_part": [
+      {"primitive": "message", "arguments": ["game", "cannot-take-that"]}
+    ]
+  },
+  {
+    "command": "read blackboard",
+    "conditions": [
+      {"primitive": "item-in-room", "arguments": ["blackboard"]}
+    ],
+    "true_part":[
+      {"primitive": "message", "arguments": ["game", "blackboard"]}
+    ],
+    "false_part":[
+      {"primitive": "message", "arguments": ["game", "item-not-here"]}
+    ]
+  }
+]

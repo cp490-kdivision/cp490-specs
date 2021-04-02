@@ -1,0 +1,14 @@
+[
+  {
+    "title": "meadow",
+    "description": "A green meadow under a blue sky. You can see trees to the north."
+  },
+  {
+    "title": "forest",
+    "description": "You are in a forest. Towering trees blow gently in the breeze."
+  },
+  {
+    "title": "east-of-meadow",
+    "description": "This part of the meadow looks odd like it's been setup to be a classroom."
+  }
+]
